@@ -14,16 +14,21 @@ interface FitCameraProps {
 function FitCamera({ controlsRef, modelSize, shadowOffset }: FitCameraProps) {
   useEffect(() => {
     if (controlsRef.current && modelSize) {
-      // 1. Create a bounding box centered at [0, shadowOffset / 2, 0] to match the Center position
+      // 1. Create a padded bounding box centered at [0, shadowOffset / 2, 0]
+      // Multiply size by 1.35 to position camera further back (making the model look smaller)
+      const paddedSize = modelSize.clone().multiplyScalar(1.35);
       const centeredBox = new THREE.Box3().setFromCenterAndSize(
         new THREE.Vector3(0, shadowOffset / 2, 0),
-        modelSize
+        paddedSize
       );
 
-      // 2. Fit the camera controls to this centered box
+      // 2. Fit the camera controls to this padded box
       controlsRef.current.fitToBox(centeredBox, false);
 
-      // 3. Set the rotation pivot point exactly to [0, shadowOffset / 2, 0]
+      // 3. Rotate the camera to look from a corner (45 degrees azimuth, 78 degrees polar for a lower view)
+      controlsRef.current.rotateTo(Math.PI / 4, Math.PI / 2.3, false);
+
+      // 4. Set the rotation pivot point exactly to [0, shadowOffset / 2, 0]
       controlsRef.current.setTarget(0, shadowOffset / 2, 0, false);
     }
   }, [modelSize, shadowOffset, controlsRef]);
@@ -95,7 +100,7 @@ export function ModelViewer({ modelUrl }: ModelViewerProps) {
             />
           )}
         </Suspense>
-        <CameraControls ref={controlsRef} minDistance={1} maxDistance={20} dollySpeed={0} />
+        <CameraControls ref={controlsRef} minDistance={1} maxDistance={20} dollySpeed={0} truckSpeed={0} />
       </Canvas>
     </div>
   );
