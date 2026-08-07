@@ -14,11 +14,11 @@ interface FitCameraProps {
 function FitCamera({ controlsRef, modelSize, shadowOffset }: FitCameraProps) {
   useEffect(() => {
     if (controlsRef.current && modelSize) {
-      // 1. Create a padded bounding box centered at [0, shadowOffset / 2, 0]
-      // Multiply size by 1.35 to position camera further back (making the model look smaller)
-      const paddedSize = modelSize.clone().multiplyScalar(1.35);
+      // 1. Create a padded bounding box centered at [0, shadowOffset, 0]
+      // Multiply size by 1.15 to position camera closer (making the model look larger)
+      const paddedSize = modelSize.clone().multiplyScalar(1.15);
       const centeredBox = new THREE.Box3().setFromCenterAndSize(
-        new THREE.Vector3(0, shadowOffset / 2, 0),
+        new THREE.Vector3(0, shadowOffset, 0),
         paddedSize
       );
 
@@ -28,8 +28,8 @@ function FitCamera({ controlsRef, modelSize, shadowOffset }: FitCameraProps) {
       // 3. Rotate the camera to look from a corner (45 degrees azimuth, 78 degrees polar for a lower view)
       controlsRef.current.rotateTo(Math.PI / 4, Math.PI / 2.3, false);
 
-      // 4. Set the rotation pivot point exactly to [0, shadowOffset / 2, 0]
-      controlsRef.current.setTarget(0, shadowOffset / 2, 0, false);
+      // 4. Set the rotation pivot point exactly to [0, shadowOffset, 0]
+      controlsRef.current.setTarget(0, shadowOffset, 0, false);
     }
   }, [modelSize, shadowOffset, controlsRef]);
 
@@ -38,14 +38,18 @@ function FitCamera({ controlsRef, modelSize, shadowOffset }: FitCameraProps) {
 
 interface ModelViewerProps {
   modelUrl: string;
+  onLoaded?: () => void;
 }
 
-export function ModelViewer({ modelUrl }: ModelViewerProps) {
+export function ModelViewer({ modelUrl, onLoaded }: ModelViewerProps) {
   const controlsRef = useRef<CameraControlsImpl>(null);
   const [modelSize, setModelSize] = useState<THREE.Vector3 | null>(null);
   const [shadowOffset, setShadowOffset] = useState<number>(0);
 
   const handleModelLoad = useCallback((scene: THREE.Group) => {
+    // Reset position first to calculate original bounds
+    scene.position.set(0, 0, 0);
+
     const box = new THREE.Box3().setFromObject(scene);
     const size = new THREE.Vector3();
     box.getSize(size);
@@ -67,24 +71,43 @@ export function ModelViewer({ modelUrl }: ModelViewerProps) {
       minY = box.min.y;
     }
 
-    // Calculate centering offset relative to Center's placement
-    const offset = -size.y / 2 - (minY - center.y);
+    // Centering the model group exactly at [0, 0, 0] horizontally, and placing the bottom at Y = 0
+    scene.position.x = -center.x;
+    scene.position.z = -center.z;
+    scene.position.y = -minY; // Places the bottom of the model exactly on the ground (Y = 0)
 
-    setShadowOffset(offset);
-    setModelSize(size);
-  }, []);
+    // Recalculate size and center after positioning
+    const positionedBox = new THREE.Box3().setFromObject(scene);
+    const positionedSize = new THREE.Vector3();
+    positionedBox.getSize(positionedSize);
+    const positionedCenter = new THREE.Vector3();
+    positionedBox.getCenter(positionedCenter);
+
+    setShadowOffset(positionedCenter.y);
+    setModelSize(positionedSize);
+    
+    if (onLoaded) {
+      onLoaded();
+    }
+  }, [onLoaded]);
 
   return (
     <div style={{ width: '100%', height: '100%', position: 'relative' }}>
       <Canvas
         gl={{ alpha: true, antialias: true }}
+        onCreated={(state) => {
+          state.gl.setClearColor(0x000000, 0);
+        }}
         camera={{ position: [0, 0, 4], fov: 45 }}
       >
         <Suspense fallback={null}>
           <Stage
             preset="rembrandt"
             intensity={1}
-            environment="city"
+            environment={{
+              preset: 'city',
+              background: false,
+            }}
             adjustCamera={false} // Disable Drei's default Bounds fitting to prevent target.copy crash with CameraControls
             shadows={false} // Disable all stage-level floor shadows
           >
