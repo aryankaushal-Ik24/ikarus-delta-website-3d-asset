@@ -132,33 +132,33 @@ interface ModelViewerProps {
   imageUrl?: string;
 }
 
-export function ModelViewer({ modelUrl, onLoaded, imageUrl }: ModelViewerProps) {
+export function ModelViewer({ modelUrl, onLoaded }: ModelViewerProps) {
   const controlsRef = useRef<CameraControlsImpl>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+  // const containerRef = useRef<HTMLDivElement>(null);
   const [modelSize, setModelSize] = useState<THREE.Vector3 | null>(null);
   const [shadowOffset, setShadowOffset] = useState<number>(0);
   const [isSceneReady, setIsSceneReady] = useState(false);
 
-  const handleCapture = useCallback(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const canvas = container.querySelector('canvas');
-    if (!canvas) return;
-
-    // Get the exact target filename from imageUrl or fallback to modelUrl
-    const targetPath = imageUrl || modelUrl;
-    const filename = targetPath.split('/').pop()?.replace('.glb', '.webp') || 'model.webp';
-
-    // Capture the WebGL context (transparent background)
-    const dataUrl = canvas.toDataURL('image/webp', 1.0);
-
-    // Download the screenshot
-    const link = document.createElement('a');
-    link.download = filename;
-    link.href = dataUrl;
-    link.click();
-  }, [imageUrl, modelUrl]);
+  // const handleCapture = useCallback(() => {
+  //   const container = containerRef.current;
+  //   if (!container) return;
+  // 
+  //   const canvas = container.querySelector('canvas');
+  //   if (!canvas) return;
+  // 
+  //   // Get the exact target filename from imageUrl or fallback to modelUrl
+  //   const targetPath = imageUrl || modelUrl;
+  //   const filename = targetPath.split('/').pop()?.replace('.glb', '.webp') || 'model.webp';
+  // 
+  //   // Capture the WebGL context (transparent background)
+  //   const dataUrl = canvas.toDataURL('image/webp', 1.0);
+  // 
+  //   // Download the screenshot
+  //   const link = document.createElement('a');
+  //   link.download = filename;
+  //   link.href = dataUrl;
+  //   link.click();
+  // }, [imageUrl, modelUrl]);
 
   const handleModelLoad = useCallback((scene: THREE.Group) => {
     // Reset position first to calculate original bounds
@@ -203,7 +203,7 @@ export function ModelViewer({ modelUrl, onLoaded, imageUrl }: ModelViewerProps) 
   }, []);
 
   return (
-    <div ref={containerRef} style={{ width: '100%', height: '100%', position: 'relative' }}>
+    <div style={{ width: '100%', height: '100%', position: 'relative' }}>
       <Canvas
         gl={{ alpha: true, antialias: true, preserveDrawingBuffer: true }}
         onCreated={(state) => {
@@ -248,7 +248,7 @@ export function ModelViewer({ modelUrl, onLoaded, imageUrl }: ModelViewerProps) 
         <CameraControls ref={controlsRef} minDistance={1} maxDistance={20} dollySpeed={0} truckSpeed={0} />
       </Canvas>
 
-      {/* Dev helper: Capture WebGL screenshot to match Option 1 alignment */}
+      {/* Dev helper: Capture WebGL screenshot to match Option 1 alignment (Commented out to hide from UI)
       <button
         onClick={handleCapture}
         title="Capture placeholder screenshot (Option 1)"
@@ -284,6 +284,7 @@ export function ModelViewer({ modelUrl, onLoaded, imageUrl }: ModelViewerProps) 
           <circle cx="12" cy="13" r="4"></circle>
         </svg>
       </button>
+      */}
     </div>
   );
 }
