@@ -78,7 +78,7 @@ function Card({ isActive = false, imageUrl, label, modelUrl, bgUrl, link }: Card
         }}
       >
         <div className="button-arrow-circle">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <line x1="5" y1="12" x2="19" y2="12"></line>
             <polyline points="12 5 19 12 12 19"></polyline>
           </svg>
@@ -186,7 +186,7 @@ function App() {
             padding="20px 20px 100px 20px"
             radius="0px"
             activeScale={1.0}
-            inactiveScale={0.6}
+            inactiveScale={0.5}
             activeOpacity={1.0}
             inactiveOpacity={1.0}
             tapInactiveToCenter={true}

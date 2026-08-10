@@ -1,3 +1,10 @@
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/assets/Satoshi-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
 /* General Layout */
 body {
   margin: 0;
@@ -109,29 +116,32 @@ body {
   z-index: 2;
 }
 
-/* Card Explore Button - Responsive Defaults (Mobile / Small Screens) */
+/* Card Explore Button - Framer Variant 3 Design Style */
 .card-explore-button {
   display: flex;
+  flex-direction: row;
   align-items: center;
-  background: rgba(244, 244, 245, 0.85);
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+  background-color: #ffffff;
+  color: #2d2d2d;
   border-radius: 99px;
-  border: 1px solid rgba(0, 0, 0, 0.04);
+  border: none;
   cursor: pointer;
-  box-shadow: none;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   margin-top: 14px;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
   position: relative;
-  overflow: hidden;
+  overflow: hidden; /* Needed for slide fill background effect */
   z-index: 1;
   
-  height: 36px;
-  padding: 6px 14px;
-  gap: 6px;
+  height: 44px;
+  padding: 4px 20px 4px 5px;
+  gap: 12px;
 }
 
-/* Left-to-right slide fill hover element */
+/* Left-to-right slide fill hover background element */
 .card-explore-button::before {
   content: '';
   position: absolute;
@@ -139,7 +149,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #18181b;
+  background-color: #2d2d2d; /* Matching Variant 3 Hover background color */
   z-index: 0;
   transform: scaleX(0);
   transform-origin: left center;
@@ -148,13 +158,11 @@ body {
 }
 
 .product-card-container.active .card-explore-button {
-  background: #f4f4f5; /* Light grey pill for active explore button as in screenshot */
-  box-shadow: none;
-  border-color: rgba(0, 0, 0, 0.05);
-  
+  background-color: #ffffff;
+  color: #2d2d2d;
   height: 44px;
-  padding: 8px 18px;
-  gap: 8px;
+  padding: 4px 20px 4px 5px;
+  gap: 12px;
 }
 
 .product-card-container:not(.active) .card-explore-button {
@@ -163,118 +171,75 @@ body {
   pointer-events: auto;
 }
 
-.card-explore-button:hover {
-  border-color: #18181b;
-  transform: translateY(-2px);
-  box-shadow: none;
+.card-explore-button:hover,
+.product-card-container.active .card-explore-button:hover {
+  transform: none;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
 }
 
-.card-explore-button:hover::before {
+.card-explore-button:hover::before,
+.product-card-container.active .card-explore-button:hover::before {
   transform: scaleX(1);
 }
 
-.card-explore-button:hover .button-label-text {
-  color: #ffffff;
-}
-
 .button-arrow-circle {
-  background: #18181b;
+  background-color: #2d2d2d;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   z-index: 1;
   
-  width: 20px;
-  height: 20px;
+  width: 36px;
+  height: 36px;
 }
 
 .product-card-container.active .button-arrow-circle {
-  width: 30px;
-  height: 30px;
+  background-color: #2d2d2d;
+  width: 36px;
+  height: 36px;
 }
 
-.card-explore-button:hover .button-arrow-circle {
-  background: transparent;
+.card-explore-button:hover .button-arrow-circle,
+.product-card-container.active .card-explore-button:hover .button-arrow-circle {
+  background-color: transparent;
   transform: rotate(-45deg);
 }
 
 .button-label-text {
-  font-weight: 700;
-  color: #18181b;
+  font-family: 'Satoshi', sans-serif;
+  font-weight: 600;
+  color: #2d2d2d;
   text-transform: uppercase;
   user-select: none;
-  transition: color 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   z-index: 1;
   
-  font-size: 8px;
-  letter-spacing: 0.6px;
+  font-size: 13px;
+  letter-spacing: normal;
 }
 
 .product-card-container.active .button-label-text {
-  font-size: 10px;
-  letter-spacing: 0.8px;
+  color: #2d2d2d;
+  font-size: 13px;
+  letter-spacing: normal;
+}
+
+.card-explore-button:hover .button-label-text,
+.product-card-container.active .card-explore-button:hover .button-label-text {
+  color: #ffffff;
 }
 
 /* Medium Screens (Tablets / Laptops >= 768px) */
 @media (min-width: 768px) {
-  .card-explore-button {
-    height: 42px;
-    padding: 8px 18px;
-    gap: 10px;
-  }
-  .product-card-container.active .card-explore-button {
-    height: 52px;
-    padding: 10px 24px;
-    gap: 14px;
-  }
-  .button-arrow-circle {
-    width: 24px;
-    height: 24px;
-  }
-  .product-card-container.active .button-arrow-circle {
-    width: 32px;
-    height: 32px;
-  }
-  .button-label-text {
-    font-size: 10px;
-    letter-spacing: 0.8px;
-  }
-  .product-card-container.active .button-label-text {
-    font-size: 12px;
-    letter-spacing: 1px;
-  }
+  /* We keep the button layout exactly as per the Figma/Framer spec to ensure UI matching */
 }
 
 /* Large Screens (Desktops >= 1200px) */
 @media (min-width: 1200px) {
-  .card-explore-button {
-    height: 48px;
-    padding: 10px 22px;
-    gap: 12px;
-  }
-  .product-card-container.active .card-explore-button {
-    height: 60px;
-    padding: 12px 30px;
-    gap: 16px;
-  }
-  .button-arrow-circle {
-    width: 28px;
-    height: 28px;
-  }
-  .product-card-container.active .button-arrow-circle {
-    width: 38px;
-    height: 38px;
-  }
-  .button-label-text {
-    font-size: 11px;
-    letter-spacing: 1px;
-  }
-  .product-card-container.active .button-label-text {
-    font-size: 13px;
-    letter-spacing: 1.2px;
-  }
+  /* We keep the button layout exactly as per the Figma/Framer spec to ensure UI matching */
 }
