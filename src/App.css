@@ -116,6 +116,18 @@ body {
   z-index: 2;
 }
 
+/* Container for multiple card buttons */
+.card-buttons-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 14px;
+  position: relative;
+  z-index: 5;
+}
+
 /* Card Explore Button - Framer Variant 3 Design Style */
 .card-explore-button {
   display: flex;
@@ -123,15 +135,13 @@ body {
   align-items: center;
   justify-content: flex-start;
   flex-wrap: nowrap;
-  background-color: #ffffff;
+  background-color: #f7f7f7;
   color: #2d2d2d;
   border-radius: 99px;
   border: none;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  margin-top: 14px;
+  box-shadow: none;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   overflow: hidden; /* Needed for slide fill background effect */
   z-index: 1;
@@ -139,6 +149,67 @@ body {
   height: 44px;
   padding: 4px 20px 4px 5px;
   gap: 12px;
+}
+
+/* Card View Live Button */
+.card-view-live-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f7f7f7;
+  border: 1px solid #e4e4e7;
+  border-radius: 99px;
+  cursor: pointer;
+  box-shadow: none;
+  position: relative;
+  overflow: hidden; /* Needed for slide fill background effect */
+  z-index: 1;
+  transition: border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  
+  height: 44px;
+  padding: 0 24px;
+}
+
+/* Bottom-to-top slide fill hover background element */
+.card-view-live-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #2d2d2d; /* Matching Variant 3 Hover background color */
+  z-index: 0;
+  transform: scaleY(0);
+  transform-origin: bottom center;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: inherit;
+}
+
+.card-view-live-button:hover {
+  border-color: #2d2d2d;
+}
+
+.card-view-live-button:hover::before {
+  transform: scaleY(1);
+}
+
+.button-label-text-live {
+  font-family: 'Satoshi', sans-serif;
+  font-weight: 600;
+  color: #2d2d2d;
+  text-transform: uppercase;
+  user-select: none;
+  transition: color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  z-index: 1;
+  
+  font-size: 13px;
+  letter-spacing: normal;
+}
+
+.card-view-live-button:hover .button-label-text-live {
+  color: #ffffff;
 }
 
 /* Left-to-right slide fill hover background element */
@@ -158,7 +229,7 @@ body {
 }
 
 .product-card-container.active .card-explore-button {
-  background-color: #ffffff;
+  background-color: #f7f7f7;
   color: #2d2d2d;
   height: 44px;
   padding: 4px 20px 4px 5px;
@@ -174,7 +245,7 @@ body {
 .card-explore-button:hover,
 .product-card-container.active .card-explore-button:hover {
   transform: none;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  box-shadow: none;
 }
 
 .card-explore-button:hover::before,

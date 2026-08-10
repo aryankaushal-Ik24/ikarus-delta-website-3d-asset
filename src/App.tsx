@@ -69,25 +69,33 @@ function Card({ isActive = false, imageUrl, label, modelUrl, bgUrl, link }: Card
         )}
       </div>
 
-      {/* Button Under Card */}
-      <button 
-        className="card-explore-button"
-        onClick={() => {
-          if (link) {
-            window.open(link, "_blank", "noopener,noreferrer");
-          }
-        }}
-      >
-        <div className="button-arrow-circle">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-            <polyline points="12 5 19 12 12 19"></polyline>
-          </svg>
-        </div>
-        <span className="button-label-text">
-          {label}
-        </span>
-      </button>
+      {/* Buttons Under Card */}
+      <div className="card-buttons-wrapper">
+        <button className="card-explore-button">
+          <div className="button-arrow-circle">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </div>
+          <span className="button-label-text">
+            {label}
+          </span>
+        </button>
+
+        {link && (
+          <button 
+            className="card-view-live-button"
+            onClick={() => {
+              window.open(link, "_blank", "noopener,noreferrer");
+            }}
+          >
+            <span className="button-label-text-live">
+              VIEW LIVE
+            </span>
+          </button>
+        )}
+      </div>
     </div>
   );
 }
