@@ -71,7 +71,15 @@ function Card({ isActive = false, imageUrl, label, modelUrl, bgUrl, link }: Card
 
       {/* Buttons Under Card */}
       <div className="card-buttons-wrapper">
-        <button className="card-explore-button">
+        <button 
+          className="card-explore-button"
+          onClick={() => {
+            const url = label === "EXPLORE FURNITURE"
+              ? "https://www.ikarusdelta.com/furniture"
+              : "https://www.ikarusdelta.com/solutions";
+            window.open(url, "_self");
+          }}
+        >
           <div className="button-arrow-circle">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -102,13 +110,6 @@ function Card({ isActive = false, imageUrl, label, modelUrl, bgUrl, link }: Card
 
 const CARDS_DATA = [
   {
-    label: "EXPLORE SAUNAS",
-    imageUrl: "/assets/sauna.webp",
-    modelUrl: "/assets/Sauna.glb",
-    bgUrl: "/assets/sauna_bg.webp",
-    link: "https://cedarandstonesauna.com/for-home/model-5-5/",
-  },
-  {
     label: "EXPLORE LUGGAGE",
     imageUrl: "/assets/bag.webp",
     modelUrl: "/assets/Luggage_Bag.glb",
@@ -116,11 +117,11 @@ const CARDS_DATA = [
     link: "https://www.roamluggage.com/collections/carry-on-luggage/products/carry-on",
   },
   {
-    label: "EXPLORE BATHWARE",
-    imageUrl: "/assets/bathtub.webp",
-    modelUrl: "/assets/Spa_4_Seater.glb",
-    bgUrl: "/assets/bathware_bg.webp",
-    link: "https://viewer.ikarusdelta.com/product/v8?id=6fa8b298-d093-48db-805a-c0afbd2ff688",
+    label: "EXPLORE SAUNAS",
+    imageUrl: "/assets/sauna.webp",
+    modelUrl: "/assets/Sauna.glb",
+    bgUrl: "/assets/sauna_bg.webp",
+    link: "https://cedarandstonesauna.com/for-home/model-5-5/",
   },
   {
     label: "EXPLORE FURNITURE",
@@ -135,6 +136,13 @@ const CARDS_DATA = [
     modelUrl: "/assets/Sculptformer.glb",
     bgUrl: "/assets/sculptformer_bg.webp",
     link: "https://foldreformer.com/products/fold-reformer-bed",
+  },
+  {
+    label: "EXPLORE BATHWARE",
+    imageUrl: "/assets/bathtub.webp",
+    modelUrl: "/assets/Spa_4_Seater.glb",
+    bgUrl: "/assets/bathware_bg.webp",
+    link: "https://viewer.ikarusdelta.com/product/v8?id=6fa8b298-d093-48db-805a-c0afbd2ff688",
   },
   {
     label: "EXPLORE TRAILERS",
@@ -188,14 +196,14 @@ function App() {
             autoPlay={false}
             interval={3000}
             draggable={false}
-            current={3} // Card 4 ("EXPLORE FURNITURE") is active by default
+            current={1} // Card 2 ("EXPLORE SAUNAS") is active by default in the middle
             align="center"
             items={6}
             gap={gap}
             padding="20px 20px 100px 20px"
             radius="0px"
             activeScale={1.0}
-            inactiveScale={0.5}
+            inactiveScale={0.65}
             activeOpacity={1.0}
             inactiveOpacity={1.0}
             tapInactiveToCenter={true}
