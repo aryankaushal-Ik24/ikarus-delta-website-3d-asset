@@ -83,7 +83,7 @@ function Card({ isActive = false, imageUrl, label, modelUrl, bgUrl, link }: Card
           </span>
         </button>
 
-        {link && (
+        {isActive && link && (
           <button 
             className="card-view-live-button"
             onClick={() => {

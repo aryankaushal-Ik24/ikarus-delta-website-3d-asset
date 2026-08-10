@@ -170,7 +170,7 @@ body {
   padding: 0 24px;
 }
 
-/* Bottom-to-top slide fill hover background element */
+/* Left-to-right slide fill hover background element */
 .card-view-live-button::before {
   content: '';
   position: absolute;
@@ -180,8 +180,8 @@ body {
   height: 100%;
   background-color: #2d2d2d; /* Matching Variant 3 Hover background color */
   z-index: 0;
-  transform: scaleY(0);
-  transform-origin: bottom center;
+  transform: scaleX(0);
+  transform-origin: left center;
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   border-radius: inherit;
 }
@@ -191,7 +191,7 @@ body {
 }
 
 .card-view-live-button:hover::before {
-  transform: scaleY(1);
+  transform: scaleX(1);
 }
 
 .button-label-text-live {
