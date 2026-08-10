@@ -77,7 +77,7 @@ function Card({ isActive = false, imageUrl, label, modelUrl, bgUrl, link }: Card
             const url = label === "EXPLORE FURNITURE"
               ? "https://www.ikarusdelta.com/furniture"
               : "https://www.ikarusdelta.com/solutions";
-            window.open(url, "_self");
+            window.parent.postMessage({ type: "redirect", url }, "*");
           }}
         >
           <div className="button-arrow-circle">
