@@ -62,6 +62,7 @@ function Card({ isActive = false, imageUrl, label, modelUrl, bgUrl, link }: Card
           >
             <ModelViewer
               modelUrl={modelUrl}
+              imageUrl={imageUrl}
               onLoaded={() => setModelLoaded(true)}
             />
           </div>
