@@ -87,6 +87,10 @@ body {
   background-position: center;
   z-index: 0;
   transition: all 0.3s ease;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
 }
 
 .product-card-container.active .product-card-bg-frame {
@@ -103,6 +107,8 @@ body {
   object-fit: contain;
   pointer-events: none;
   user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
   z-index: 2;
 }
 
@@ -313,4 +319,49 @@ body {
 /* Large Screens (Desktops >= 1200px) */
 @media (min-width: 1200px) {
   /* We keep the button layout exactly as per the Figma/Framer spec to ensure UI matching */
+}
+
+/* Interact Onboarding Pointer Overlay */
+.interact-pointer-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 8;
+  opacity: 0;
+  visibility: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+              visibility 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.interact-pointer-overlay.visible {
+  opacity: 1;
+  visibility: visible;
+  animation: pointerWobble 3.5s ease-in-out infinite;
+}
+
+.pointer-hand-img {
+  width: 60px;
+  height: auto;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
+}
+
+@keyframes pointerWobble {
+  0%, 100% {
+    transform: translate(-50%, -50%) translateX(0);
+  }
+  25% {
+    transform: translate(-50%, -50%) translateX(-20px);
+  }
+  75% {
+    transform: translate(-50%, -50%) translateX(20px);
+  }
 }

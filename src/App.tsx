@@ -44,6 +44,8 @@ function Card({ isActive = false, imageUrl, label, modelUrl, bgUrl, link }: Card
           src={imageUrl}
           alt={label}
           className="card-preview-image"
+          draggable="false"
+          onDragStart={(e) => e.preventDefault()}
           style={{
             opacity: modelLoaded ? 0 : 1,
             transition: 'opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1)',
@@ -66,6 +68,7 @@ function Card({ isActive = false, imageUrl, label, modelUrl, bgUrl, link }: Card
           >
             <ModelViewer
               modelUrl={modelUrl}
+              imageUrl={imageUrl}
               onLoaded={() => setModelLoaded(true)}
             />
           </div>
@@ -152,7 +155,7 @@ const CARDS_DATA = [
     imageUrl: "/assets/trailer.webp", 
     modelUrl: "/assets/Trailer.glb",
     bgUrl: "/assets/trailer_bg.webp",
-    link: "",
+    link: "https://toy-trailer.ikarusdelta.com/",
   },
 ];
 

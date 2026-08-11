@@ -7,9 +7,10 @@ import { Model } from './Model';
 interface IdleWobbleProps {
   controlsRef: React.RefObject<CameraControlsImpl | null>;
   modelSize: THREE.Vector3 | null;
+  setShowPointer: (show: boolean) => void;
 }
 
-function IdleWobble({ controlsRef, modelSize }: IdleWobbleProps) {
+function IdleWobble({ controlsRef, modelSize, setShowPointer }: IdleWobbleProps) {
   const isInteracting = useRef(false);
   const lastInteractionTime = useRef(0);
   const baseAzimuth = useRef<number | null>(null);
@@ -19,11 +20,20 @@ function IdleWobble({ controlsRef, modelSize }: IdleWobbleProps) {
     const controls = controlsRef.current;
     if (!controls) return;
 
+    let timeoutId: any = null;
+
     const handleControlStart = () => {
       isInteracting.current = true;
+      setShowPointer(false);
+      if (timeoutId) clearTimeout(timeoutId);
     };
+
     const handleControlEnd = () => {
       isInteracting.current = false;
+      if (timeoutId) clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        setShowPointer(true);
+      }, 1500);
     };
 
     controls.addEventListener('controlstart', handleControlStart);
@@ -31,11 +41,17 @@ function IdleWobble({ controlsRef, modelSize }: IdleWobbleProps) {
 
     baseAzimuth.current = controls.azimuthAngle;
 
+    // Trigger initial pointer load after 1.5 seconds of render
+    timeoutId = setTimeout(() => {
+      setShowPointer(true);
+    }, 1500);
+
     return () => {
       controls.removeEventListener('controlstart', handleControlStart);
       controls.removeEventListener('controlend', handleControlEnd);
+      if (timeoutId) clearTimeout(timeoutId);
     };
-  }, [controlsRef, modelSize]);
+  }, [controlsRef, modelSize, setShowPointer]);
 
   useFrame((state) => {
     const controls = controlsRef.current;
@@ -132,33 +148,34 @@ interface ModelViewerProps {
   imageUrl?: string;
 }
 
-export function ModelViewer({ modelUrl, onLoaded }: ModelViewerProps) {
+export function ModelViewer({ modelUrl, onLoaded, imageUrl }: ModelViewerProps) {
   const controlsRef = useRef<CameraControlsImpl>(null);
-  // const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [modelSize, setModelSize] = useState<THREE.Vector3 | null>(null);
   const [shadowOffset, setShadowOffset] = useState<number>(0);
   const [isSceneReady, setIsSceneReady] = useState(false);
+  const [showPointer, setShowPointer] = useState(false);
 
-  // const handleCapture = useCallback(() => {
-  //   const container = containerRef.current;
-  //   if (!container) return;
-  // 
-  //   const canvas = container.querySelector('canvas');
-  //   if (!canvas) return;
-  // 
-  //   // Get the exact target filename from imageUrl or fallback to modelUrl
-  //   const targetPath = imageUrl || modelUrl;
-  //   const filename = targetPath.split('/').pop()?.replace('.glb', '.webp') || 'model.webp';
-  // 
-  //   // Capture the WebGL context (transparent background)
-  //   const dataUrl = canvas.toDataURL('image/webp', 1.0);
-  // 
-  //   // Download the screenshot
-  //   const link = document.createElement('a');
-  //   link.download = filename;
-  //   link.href = dataUrl;
-  //   link.click();
-  // }, [imageUrl, modelUrl]);
+  const handleCapture = useCallback(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const canvas = container.querySelector('canvas');
+    if (!canvas) return;
+
+    // Get the exact target filename from imageUrl or fallback to modelUrl
+    const targetPath = imageUrl || modelUrl;
+    const filename = targetPath.split('/').pop()?.replace('.glb', '.webp') || 'model.webp';
+
+    // Capture the WebGL context (transparent background)
+    const dataUrl = canvas.toDataURL('image/webp', 1.0);
+
+    // Download the screenshot
+    const link = document.createElement('a');
+    link.download = filename;
+    link.href = dataUrl;
+    link.click();
+  }, [imageUrl, modelUrl]);
 
   const handleModelLoad = useCallback((scene: THREE.Group) => {
     // Reset position first to calculate original bounds
@@ -203,7 +220,7 @@ export function ModelViewer({ modelUrl, onLoaded }: ModelViewerProps) {
   }, []);
 
   return (
-    <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+    <div ref={containerRef} style={{ width: '100%', height: '100%', position: 'relative' }}>
       <Canvas
         gl={{ alpha: true, antialias: true, preserveDrawingBuffer: true }}
         onCreated={(state) => {
@@ -212,9 +229,12 @@ export function ModelViewer({ modelUrl, onLoaded }: ModelViewerProps) {
         camera={{ position: [0, 0, 4], fov: 45 }}
       >
         <Suspense fallback={null}>
+          <ambientLight intensity={0.7} />
+          <directionalLight position={[5, 15, 5]} intensity={1.0} />
+          <directionalLight position={[-5, 10, -5]} intensity={0.4} />
           <Stage
-            preset="rembrandt"
-            intensity={1}
+            preset="portrait"
+            intensity={1.0}
             environment={{
               preset: 'city',
               background: false,
@@ -236,6 +256,7 @@ export function ModelViewer({ modelUrl, onLoaded }: ModelViewerProps) {
               <IdleWobble
                 controlsRef={controlsRef}
                 modelSize={modelSize}
+                setShowPointer={setShowPointer}
               />
             </>
           )}
@@ -248,7 +269,7 @@ export function ModelViewer({ modelUrl, onLoaded }: ModelViewerProps) {
         <CameraControls ref={controlsRef} minDistance={1} maxDistance={20} dollySpeed={0} truckSpeed={0} />
       </Canvas>
 
-      {/* Dev helper: Capture WebGL screenshot to match Option 1 alignment (Commented out to hide from UI)
+      {/* Dev helper: Capture WebGL screenshot to match Option 1 alignment */}
       <button
         onClick={handleCapture}
         title="Capture placeholder screenshot (Option 1)"
@@ -284,7 +305,17 @@ export function ModelViewer({ modelUrl, onLoaded }: ModelViewerProps) {
           <circle cx="12" cy="13" r="4"></circle>
         </svg>
       </button>
-      */}
+
+      {/* Interact Onboarding Pointer Overlay */}
+      <div className={`interact-pointer-overlay ${showPointer ? 'visible' : ''}`}>
+        <img 
+          src="/assets/pointer.webp" 
+          alt="Drag to interact" 
+          className="pointer-hand-img"
+          draggable="false"
+          onDragStart={(e) => e.preventDefault()}
+        />
+      </div>
     </div>
   );
 }
