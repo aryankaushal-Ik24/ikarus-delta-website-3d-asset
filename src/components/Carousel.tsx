@@ -293,6 +293,13 @@ export default function LocalSlideshow(props: MyComponentProps) {
                                 : { type: "tween", duration: tweenDuration })
                             : { type: "tween", duration: 0 });
 
+                    const isAboveTablet = typeof window !== 'undefined' && window.innerWidth >= 768;
+                    const isVisibleCard = !isAboveTablet || Math.abs(wrappedDiff) <= 1;
+                    const opacityValue = isActive 
+                        ? activeOpacity 
+                        : (isVisibleCard ? inactiveOpacity : 0);
+                    const pointerEventsValue = (isActive || (tapInactiveToCenter && isVisibleCard)) ? "auto" : "none";
+
                     return (
                         <motion.div
                             key={index}
@@ -307,15 +314,14 @@ export default function LocalSlideshow(props: MyComponentProps) {
                                 height: `${itemHeight}px`,
                                 transformOrigin: "center center",
                                 cursor: canTapToCenter ? "pointer" : "default",
-                                pointerEvents:
-                                    isActive || tapInactiveToCenter ? "auto" : "none",
+                                pointerEvents: pointerEventsValue,
                                 zIndex: totalItems - Math.abs(wrappedDiff),
                             }}
                             animate={{
                                 x: childX,
                                 y: childY,
                                 scale: isActive ? activeScale : inactiveScale,
-                                opacity: isActive ? activeOpacity : inactiveOpacity,
+                                opacity: opacityValue,
                             }}
                             transition={transition}
                         >
