@@ -46,7 +46,9 @@ function Card({ isActive = false, imageUrl, label, modelUrl, bgUrl, link }: Card
           className="card-preview-image"
           style={{
             opacity: modelLoaded ? 0 : 1,
-            transition: 'opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
+            transition: 'opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1)',
+            transform: isActive ? 'scale(0.90909)' : 'scale(1.33333)',
+            transformOrigin: 'center center',
           }}
         />
 
@@ -56,13 +58,14 @@ function Card({ isActive = false, imageUrl, label, modelUrl, bgUrl, link }: Card
             className="card-3d-container"
             style={{
               opacity: modelLoaded ? 1 : 0,
-              transition: 'opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
-              pointerEvents: modelLoaded ? 'auto' : 'none'
+              transition: 'opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1)',
+              pointerEvents: modelLoaded ? 'auto' : 'none',
+              transform: isActive ? 'scale(0.90909)' : 'scale(1.33333)',
+              transformOrigin: 'center center',
             }}
           >
             <ModelViewer
               modelUrl={modelUrl}
-              imageUrl={imageUrl}
               onLoaded={() => setModelLoaded(true)}
             />
           </div>
@@ -202,8 +205,8 @@ function App() {
             gap={gap}
             padding="20px 20px 100px 20px"
             radius="0px"
-            activeScale={1.0}
-            inactiveScale={0.65}
+            activeScale={1.1}
+            inactiveScale={0.75}
             activeOpacity={1.0}
             inactiveOpacity={1.0}
             tapInactiveToCenter={true}
