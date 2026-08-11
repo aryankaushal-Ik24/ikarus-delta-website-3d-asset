@@ -95,14 +95,17 @@ interface FitCameraProps {
   controlsRef: React.RefObject<CameraControlsImpl | null>;
   modelSize: THREE.Vector3 | null;
   shadowOffset: number;
+  modelUrl: string;
 }
 
-function FitCamera({ controlsRef, modelSize, shadowOffset }: FitCameraProps) {
+function FitCamera({ controlsRef, modelSize, shadowOffset, modelUrl }: FitCameraProps) {
   useEffect(() => {
     if (controlsRef.current && modelSize) {
       // 1. Create a padded bounding box centered at [0, shadowOffset, 0]
-      // Multiply size by 1.15 to position camera closer (making the model look larger)
-      const paddedSize = modelSize.clone().multiplyScalar(1.15);
+      // Multiply size by a smaller scalar for Sculptformer to position the camera closer (making it look larger)
+      const isSculptformer = modelUrl.toLowerCase().includes('sculptformer');
+      const multiplier = isSculptformer ? 0.8 : 1.15;
+      const paddedSize = modelSize.clone().multiplyScalar(multiplier);
       const centeredBox = new THREE.Box3().setFromCenterAndSize(
         new THREE.Vector3(0, shadowOffset, 0),
         paddedSize
@@ -111,10 +114,15 @@ function FitCamera({ controlsRef, modelSize, shadowOffset }: FitCameraProps) {
       // 2. Fit the camera controls to this padded box
       controlsRef.current.fitToBox(centeredBox, false);
 
-      // 3. Rotate the camera to look from a corner (45 degrees azimuth, 78 degrees polar for a lower view)
+      // 3. Set dynamic zoom limits: maxDistance is the default starting distance, and allow zooming in up to 88% of it
+      const defaultDistance = controlsRef.current.distance;
+      controlsRef.current.maxDistance = defaultDistance;
+      controlsRef.current.minDistance = defaultDistance * 0.88; // 12% slight zoom-in room
+
+      // 4. Rotate the camera to look from a corner (45 degrees azimuth, 78 degrees polar for a lower view)
       controlsRef.current.rotateTo(Math.PI / 4, Math.PI / 2.3, false);
 
-      // 4. Set the rotation pivot point exactly to [0, shadowOffset, 0]
+      // 5. Set the rotation pivot point exactly to [0, shadowOffset, 0]
       controlsRef.current.setTarget(0, shadowOffset, 0, false);
     }
   }, [modelSize, shadowOffset, controlsRef]);
@@ -252,6 +260,7 @@ export function ModelViewer({ modelUrl, onLoaded, imageUrl }: ModelViewerProps) 
                 controlsRef={controlsRef}
                 modelSize={modelSize}
                 shadowOffset={shadowOffset}
+                modelUrl={modelUrl}
               />
               <IdleWobble
                 controlsRef={controlsRef}
@@ -266,7 +275,7 @@ export function ModelViewer({ modelUrl, onLoaded, imageUrl }: ModelViewerProps) 
             <FrameRenderNotifier onReady={onLoaded} />
           )}
         </Suspense>
-        <CameraControls ref={controlsRef} minDistance={1} maxDistance={20} dollySpeed={0} truckSpeed={0} />
+        <CameraControls ref={controlsRef} dollySpeed={0.3} truckSpeed={0} />
       </Canvas>
 
       {/* Dev helper: Capture WebGL screenshot to match Option 1 alignment */}
