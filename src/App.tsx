@@ -16,14 +16,14 @@ interface CardProps {
 function Card({ isActive = false, imageUrl, label, modelUrl, bgUrl, link }: CardProps) {
   const [modelLoaded, setModelLoaded] = useState(false);
   const [shouldRenderModel, setShouldRenderModel] = useState(false);
-  const redirectionUrl = {
+  const redirectionUrl: Record<string, string> = {
     'EXPLORE SAUNAS':'https://www.ikarusdelta.com/3d-sauna-configurator',
     'EXPLORE FURNITURE':'https://www.ikarusdelta.com/3d-furniture-configurator',
     'EXPLORE BATHWARE':'https://www.ikarusdelta.com/solutions',
     'EXPLORE LUGGAGE':'https://www.ikarusdelta.com/3d-luggage-configurator',
     'EXPLORE REFORMERS':'https://www.ikarusdelta.com/solutions',
     'EXPLORE TRAILERS':'https://www.ikarusdelta.com/solutions',
-  }
+  };
 
   // Delay mounting of the model until after transition settles
   useEffect(() => {
